@@ -29,11 +29,11 @@ export default function App() {
            component={Register}  
           options={{headerShown:false}}/>
            <Stack.Screen 
-           name='forgotPassword'
+           name='forgot-password'
            component={ForgotPassword}  
           options={{headerShown:false}}/>
            <Stack.Screen 
-           name='resetPassword'
+           name='reset-password'
            component={ResetPassword}  
           options={{headerShown:false}}/>
 
