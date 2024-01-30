@@ -3,8 +3,10 @@ import { Text, View } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import COLORS from '../../constants/Colors';
 import { Controller } from 'react-hook-form';
+import useToggle from '../../hooks/useToggle';
 
-const Input = ({ control, name, placeholder, rules, errors, secureTextEntry,label }) => {
+const PasswordInput = ({ control, name, placeholder, rules, errors, secureTextEntry,label }) => {
+  const [isPasswordVisible,togglePasswordVisible]=useToggle(false)
 
   const inputStyle = {
     width: '100%',
@@ -22,7 +24,7 @@ const Input = ({ control, name, placeholder, rules, errors, secureTextEntry,labe
       <Text style={{
         fontSize: 16,
         fontWeight: 'bold',
-        marginTop: 0,
+        marginTop: 8,
         marginBottom: 8,
         textTransform: 'capitalize'
       }}>
@@ -38,7 +40,8 @@ const Input = ({ control, name, placeholder, rules, errors, secureTextEntry,labe
         value={value}
         onChangeText={onChange}
         mode='outlined'
-       keyboardType="email-address"
+        secureTextEntry={!isPasswordVisible} 
+       right={<TextInput.Icon icon={isPasswordVisible?"eye":'eye-off'} onPress={() => togglePasswordVisible()} />}
        outlineStyle={inputStyle}
       />
       )}
@@ -49,4 +52,4 @@ const Input = ({ control, name, placeholder, rules, errors, secureTextEntry,labe
   );
 };
 
-export default Input;
+export default PasswordInput;
