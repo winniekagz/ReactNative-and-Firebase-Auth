@@ -14,9 +14,13 @@ import {FacebookImg, googleImg,  linkedInIcon, twitterImg } from '../assets';
 import HorizontalLineWithName from '../components/HorizontalNameWithName'
 import PageHeader from '../components/PageHeader';
 import SocialIcon from '../components/SocialIcon';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../firebase';
+import { useToast } from "react-native-toast-notifications";
 
 export default function Register({ navigation }) {
-  const [formData, setFormData] = useState({ email: '', password: '' });
+  const [loading, setLoading] = useState(false);
+  const toast=useToast()
 
   const schema = Yup.object().shape({
     email: Yup.string().required('Email is required').email('Invalid email'),
@@ -36,10 +40,39 @@ export default function Register({ navigation }) {
     },
   });
 
-  const onPressSend = (formData) => {
-    alert('test')
-    console.log('formData', formData);
+  const handleSignup = (data) => {
+    setLoading(true)
+   
+    createUserWithEmailAndPassword(auth, data.email, data.password)
+    .then((userCredential) => {
+   
+      const user = userCredential.user;
+      toast.show("User created successfully", {
+        type: "success",
+        placement: "top ",
+        duration: 4000,
+        offset: 30,
+        animationType: "slide-in ",
+      });
+   
+    })
+    .catch((error) => {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      console.log('message',errorMessage,errorCode)
+      if (errorMessage){
+      toast.show("User already Exists", {
+        type: "danger",
+        placement: "top",
+        duration: 4000,
+        offset: 50,
+        animationType: "slide-in",
+      });
+    }
+    });
+    
   };
+
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.white }}>
@@ -87,7 +120,7 @@ export default function Register({ navigation }) {
           <CustomButton
             buttonText={'Register'}
             color={COLORS.secondary}
-            onPress={handleSubmit(onPressSend)}
+            onPress={handleSubmit(handleSignup)}
             style={{
               marginVertical: 22,
               padding: 10,
