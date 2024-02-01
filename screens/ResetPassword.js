@@ -14,6 +14,7 @@ import {FacebookImg, googleImg,  linkedInIcon, twitterImg } from '../assets';
 import HorizontalLineWithName from '../components/HorizontalNameWithName'
 import PageHeader from '../components/PageHeader';
 import SocialIcon from '../components/SocialIcon';
+import { passwordReset } from 'firebase/auth';
 
 export default function ResetPassword({ navigation }) {
  
@@ -35,9 +36,32 @@ export default function ResetPassword({ navigation }) {
     },
   });
 
-  const onPressSend = (formData) => {
-    alert('test')
-    console.log('formData', formData);
+  const handlePasswordReset = async (data) => {
+    setLoading(true);
+  
+    try {
+      await passwordReset(auth  ,data?.password);
+  
+      toast.show("Password successfully reset", {
+        type: "success",
+        placement: "top",
+        duration: 4000,
+        offset: 50,
+        animationType: "slide-in",
+      });
+    } catch (error) {
+      const errorMessage = error.message;
+  
+      toast.show(errorMessage, {
+        type: "danger",
+        placement: "top",
+        duration: 4000,
+        offset: 50,
+        animationType: "slide-in",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

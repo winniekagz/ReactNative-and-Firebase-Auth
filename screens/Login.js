@@ -1,5 +1,5 @@
 // Register.js
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Image, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import COLORS from '../constants/Colors';
@@ -14,16 +14,19 @@ import {FacebookImg, googleImg,  linkedInIcon, twitterImg } from '../assets';
 import HorizontalLineWithName from '../components/HorizontalNameWithName'
 import PageHeader from '../components/PageHeader';
 import SocialIcon from '../components/SocialIcon';
+import { auth } from '../firebase';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { useToast } from "react-native-toast-notifications";
 
 export default function Login({ navigation }) {
-  const [formData, setFormData] = useState({ email: '', password: '' });
+  const [loading, setLoading] = useState(false);
 
   const schema = Yup.object().shape({
     email: Yup.string().required('Email is required').email('Invalid email'),
     password: Yup.string().required('Password is required').min(8, 'Password must contain at least 8 characters'),  
 
   });
-
+  const toast = useToast();
   const { control, handleSubmit, formState: { errors } } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
@@ -32,10 +35,39 @@ export default function Login({ navigation }) {
     },
   });
 
-  const onPressSend = (formData) => {
-    alert('test')
-    console.log('formData', formData);
+  const handleSignIn = (data) => {
+    setLoading(true)
+   
+    signInWithEmailAndPassword(auth, data?.email, data?.password)
+    .then((userCredential) => {
+   
+      const user = userCredential.user;
+      console.log('loggedInUser',user)
+      
+      toast.show("Login successful", {
+        type: "success",
+        placement: "top",
+        duration: 4000,
+        offset: 50,
+        animationType: "slide-in",
+      });
+      
+      // ...
+    })
+    .catch((error) => {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      toast.show("invalid credentials", {
+        type: "danger",
+        placement: "top",
+        duration: 4000,
+        offset: 50,
+        animationType: "slide-in",
+      });
+    });
+    
   };
+
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.white }}>
@@ -68,7 +100,7 @@ export default function Login({ navigation }) {
           <CustomButton
             buttonText={'Login'}
             color={COLORS.secondary}
-            onPress={handleSubmit(onPressSend)}
+            onPress={handleSubmit(handleSignIn)}
             style={{
               marginVertical: 22,
               padding: 10,

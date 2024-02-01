@@ -3,13 +3,17 @@ import { StyleSheet, Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack'
 import { Login,Register,ResetPassword,ForgotPassword ,Home} from './screens';
+import { ToastProvider } from 'react-native-toast-notifications'
 
 const Stack=createNativeStackNavigator()
 export default function App() {
 
   return (
    
-     
+    <ToastProvider  successColor="green"
+    dangerColor="red"
+
+    warningColor="orange">
     <NavigationContainer>
   
         <Stack.Navigator
@@ -41,7 +45,7 @@ export default function App() {
        
      
     </NavigationContainer>
-    
+    </ToastProvider>
   );
 }
 
